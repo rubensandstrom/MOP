@@ -41,54 +41,68 @@ void init () {
 	GPIO_D.pupdr |= 0xAAAA0000; // D [15-8]: pull down
 }
 void out7seg (char c) {
-	GPIO_D.odrHigh &= 0x00;
+	GPIO_D.odrLow &= 0x00;
 	switch c {
 		case '1':
-			GPIO_D.odrHigh |= 0b00000110;
+			GPIO_D.odrLow |= 0b00000110;
 			break;
 		case '2'
-			GPIO_D.odrHigh |= 0b01011011;
+			GPIO_D.odrLow |= 0b01011011;
 			break;
 		case '3'
-			GPIO_D.odrHigh |= 0b01001111;
+			GPIO_D.odrLow |= 0b01001111;
 			break;
 		case 'A'
-			GPIO_D.odrHigh |= 0b01110111;
+			GPIO_D.odrLow |= 0b01110111;
 			break;
 		case '4'
-			GPIO_D.odrHigh |= 0b01100110;
+			GPIO_D.odrLow |= 0b01100110;
 			break;
 		case '5'
-			GPIO_D.odrHigh |= 0b01101101;
+			GPIO_D.odrLow |= 0b01101101;
 			break;
 		case '6'
-			GPIO_D.odrHigh |= 0b01111101;
+			GPIO_D.odrLow |= 0b01111101;
 			break;
 		case 'B'
-			GPIO_D.odrHigh |= 0b01111100;
+			GPIO_D.odrLow |= 0b01111100;
 			break;
 		case '7'
-			GPIO_D.odrHigh |= 0b00000111;
+			GPIO_D.odrLow |= 0b00000111;
 			break;
 		case '8'
-			GPIO_D.odrHigh |= 0b01111111;
+			GPIO_D.odrLow |= 0b01111111;
 			break;
 		case '9'
-			GPIO_D.odrHigh |= 0b01101111;
+			GPIO_D.odrLow |= 0b01101111;
 			break;
 		case 'C'
-			GPIO_D.odrHigh |= 0b00111001;
+			GPIO_D.odrLow |= 0b00111001;
 			break;
 		case '*'
 			break;
 		case '0'
-			GPIO_D.odrHigh |= 0b00111111;
+			GPIO_D.odrLow |= 0b00111111;
 			break;
 		case '#'
 			break;
 		case 'D'
-			GPIO_D.odrHigh |= 0b01011110;
+			GPIO_D.odrLow |= 0b01011110;
 			break;
+	}
+}
+
+char keyb () {
+	GPIO_D.odrHigh &= 0x00;
+	char key[16] = "123A456B789C*0#D";
+	
+	for (int i = 0; i <= 3; i++) {
+		GPIO_D.odrHigh |= (1<<(i+4));
+		for (int j = 0; j <= 3; j++) {
+			if GPIO_D.idrHigh && (1<<j) {
+				return key[i*4 + j];
+			}
+		}
 	}
 }
 
@@ -97,7 +111,7 @@ void main (void)
 	unsigned char c;
 	init();
 	while(1) {
-		out7seg('A');
+		out7seg(keyb());
 	}
 }
 
