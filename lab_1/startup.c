@@ -95,7 +95,7 @@ void out7seg (char c) {
 void main (void)
 {
 	unsigned char c;
-	init_app();
+	init();
 	while(1) {
 		out7seg('A');
 	}
