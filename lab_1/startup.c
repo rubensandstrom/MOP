@@ -34,67 +34,30 @@ typedef struct {
 #define GPIO_E *((GPIO *) 0x40021000)
 
 void init () {
-	GPIO_D.moder &= 0x0000FFFF;
-	GPIO_D.moder |= 0x55000000; // D [15-8]: ooooiiii
-	GPIO_D.oTyper &= 0x00FF; // D [15-8]: push-pull
-	GPIO_D.pupdr &= 0x0000FFFF;
-	GPIO_D.pupdr |= 0xAAAA0000; // D [15-8]: pull down
+	GPIO_D.moder &= 0x00000000;
+	GPIO_D.moder |= 0x55005555; // D [15-0]: ooiioooo
+	GPIO_D.oTyper &= 0x0000; // D [15-8]: push-pull
+	GPIO_D.pupdr &= 0x00000000;
+	GPIO_D.pupdr |= 0xAAAA5555; // D [15-8]: pull down
 }
-void out7seg (char c) {
+
+void out7seg (unsigned char c) {
 	GPIO_D.odrLow &= 0x00;
-	switch c {
-		case '1':
-			GPIO_D.odrLow |= 0b00000110;
+	 
+	unsigned char key[14] = "123A456B789C0D";
+	unsigned char code[14] = [0x06, 0x5B, 0x4F, 0x77, 0x66, 0x6D, 0x7D, 0x7C, 0x07, 0x7F, 0x67, 0x39, 0x3F, 0x5E];
+	
+	for (int i = 0; i <= 15; i++) {
+		if c == key[i] {
+			GPIO_D.odrLow |= code[i]
 			break;
-		case '2'
-			GPIO_D.odrLow |= 0b01011011;
-			break;
-		case '3'
-			GPIO_D.odrLow |= 0b01001111;
-			break;
-		case 'A'
-			GPIO_D.odrLow |= 0b01110111;
-			break;
-		case '4'
-			GPIO_D.odrLow |= 0b01100110;
-			break;
-		case '5'
-			GPIO_D.odrLow |= 0b01101101;
-			break;
-		case '6'
-			GPIO_D.odrLow |= 0b01111101;
-			break;
-		case 'B'
-			GPIO_D.odrLow |= 0b01111100;
-			break;
-		case '7'
-			GPIO_D.odrLow |= 0b00000111;
-			break;
-		case '8'
-			GPIO_D.odrLow |= 0b01111111;
-			break;
-		case '9'
-			GPIO_D.odrLow |= 0b01101111;
-			break;
-		case 'C'
-			GPIO_D.odrLow |= 0b00111001;
-			break;
-		case '*'
-			break;
-		case '0'
-			GPIO_D.odrLow |= 0b00111111;
-			break;
-		case '#'
-			break;
-		case 'D'
-			GPIO_D.odrLow |= 0b01011110;
-			break;
+		}
 	}
 }
 
-char keyb () {
+unsigned char keyb () {
 	GPIO_D.odrHigh &= 0x00;
-	char key[16] = "123A456B789C*0#D";
+	unsigned char key[16] = "123A456B789C*0#D";
 	
 	for (int i = 0; i <= 3; i++) {
 		GPIO_D.odrHigh |= (1<<(i+4));
